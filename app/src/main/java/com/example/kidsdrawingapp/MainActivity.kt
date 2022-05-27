@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private var drawingView: DrawingView? = null
     private var mImageButtonCurrentPaint: ImageButton? = null
+    var customProgressDialog: Dialog? = null
+
 
     val openGalleryLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -103,6 +105,8 @@ class MainActivity : AppCompatActivity() {
         id_save.setOnClickListener {
 
             if(isReadStorageAllowed()){
+                showProgressDialog()
+
                 lifecycleScope.launch {
                     val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
                     saveBitmapFile(getBitmapFromView(flDrawingView))
@@ -238,6 +242,7 @@ class MainActivity : AppCompatActivity() {
                     result = f.absolutePath
 
                     runOnUiThread{
+                        suspendProgressDialog()
                         if(result.isNotEmpty()){
                             Toast.makeText(this@MainActivity,
                             "File saved successfully : $result",
@@ -257,5 +262,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return result
+    }
+
+    /**
+     * To Display the progress Dialog while saving an image
+     * cause sometimes it can take some time to save
+     */
+
+    private fun showProgressDialog(){
+        customProgressDialog = Dialog(this@MainActivity)
+
+        //set the screen content from a layout resource
+        //the resource will be inflated, adding all top-level views to the screen
+
+        customProgressDialog?.setContentView(R.layout.dialog_custom_progress)
+
+        customProgressDialog?.show()
+    }
+
+    private fun suspendProgressDialog(){
+        if(customProgressDialog != null){
+            customProgressDialog?.dismiss()
+            customProgressDialog = null
+        }
     }
 }
