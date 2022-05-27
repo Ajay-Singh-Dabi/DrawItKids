@@ -3,6 +3,9 @@ package com.example.kidsdrawingapp
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -164,5 +167,22 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         builder.create().show()
+    }
+
+
+    private fun getBitmapFromView(view: View) : Bitmap {
+        val returnedBitmap = Bitmap.createBitmap(view.width,
+            view.height, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if(bgDrawable != null){
+            bgDrawable.draw(canvas)
+        }else{
+            canvas.drawColor(Color.WHITE)
+        }
+
+        view.draw(canvas)
+        return returnedBitmap
     }
 }
